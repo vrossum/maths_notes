@@ -20,21 +20,16 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.11' # Change this to match your target Python version
-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        # If you have a requirements.txt, uncomment the next line:
-        # pip install -r requirements.txt
-        pip install nuitka
-
+        # Added zstandard to fix the compression warning
+        pip install zstandard nuitka
     - name: Compile with Nuitka
       run: |
-        # --standalone bundles everything into a folder
-        # --onefile packs that folder into a single .exe
-        python -m nuitka --standalone --onefile maths_notes.py
-
-    - name: Upload the EXE artifact
+        # Added assume-yes and the tk-inter plugin
+        python -m nuitka --assume-yes-for-downloads --enable-plugin=tk-inter --standalone --onefile maths_notes.py
+      - name: Upload the EXE artifact
       uses: actions/upload-artifact@v4
       with:
         name: Windows-Executable
